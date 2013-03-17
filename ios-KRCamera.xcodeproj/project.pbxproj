@@ -1,0 +1,383 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8EF9A89016F601D9007004F6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A88F16F601D9007004F6 /* UIKit.framework */; };
+		8EF9A89216F601D9007004F6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A89116F601D9007004F6 /* Foundation.framework */; };
+		8EF9A89416F601D9007004F6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A89316F601D9007004F6 /* CoreGraphics.framework */; };
+		8EF9A89A16F601D9007004F6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8EF9A89816F601D9007004F6 /* InfoPlist.strings */; };
+		8EF9A89C16F601D9007004F6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF9A89B16F601D9007004F6 /* main.m */; };
+		8EF9A8A016F601D9007004F6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF9A89F16F601D9007004F6 /* AppDelegate.m */; };
+		8EF9A8A216F601D9007004F6 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF9A8A116F601D9007004F6 /* Default.png */; };
+		8EF9A8A416F601D9007004F6 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF9A8A316F601D9007004F6 /* Default@2x.png */; };
+		8EF9A8A616F601D9007004F6 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF9A8A516F601D9007004F6 /* Default-568h@2x.png */; };
+		8EF9A8A916F601D9007004F6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF9A8A816F601D9007004F6 /* ViewController.m */; };
+		8EF9A8AC16F601D9007004F6 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EF9A8AA16F601D9007004F6 /* ViewController.xib */; };
+		8EF9A8B716F601F9007004F6 /* KRCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF9A8B516F601F9007004F6 /* KRCamera.m */; };
+		8EF9A8B816F601F9007004F6 /* KRCamera.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EF9A8B616F601F9007004F6 /* KRCamera.xib */; };
+		8EF9A8BB16F60605007004F6 /* KRCamera_iPhone5.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EF9A8BA16F60605007004F6 /* KRCamera_iPhone5.xib */; };
+		8EF9A8BD16F60698007004F6 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A8BC16F60698007004F6 /* AssetsLibrary.framework */; };
+		8EF9A8BF16F6069D007004F6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A8BE16F6069D007004F6 /* ImageIO.framework */; };
+		8EF9A8C116F606A6007004F6 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A8C016F606A5007004F6 /* MapKit.framework */; };
+		8EF9A8C316F606AE007004F6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A8C216F606AE007004F6 /* CoreLocation.framework */; };
+		8EF9A8C716F606CD007004F6 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A8C616F606CD007004F6 /* MobileCoreServices.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8EF9A88C16F601D9007004F6 /* ios-KRCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-KRCamera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8EF9A88F16F601D9007004F6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		8EF9A89116F601D9007004F6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		8EF9A89316F601D9007004F6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		8EF9A89716F601D9007004F6 /* ios-KRCamera-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ios-KRCamera-Info.plist"; sourceTree = "<group>"; };
+		8EF9A89916F601D9007004F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8EF9A89B16F601D9007004F6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8EF9A89D16F601D9007004F6 /* ios-KRCamera-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ios-KRCamera-Prefix.pch"; sourceTree = "<group>"; };
+		8EF9A89E16F601D9007004F6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		8EF9A89F16F601D9007004F6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8EF9A8A116F601D9007004F6 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		8EF9A8A316F601D9007004F6 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		8EF9A8A516F601D9007004F6 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		8EF9A8A716F601D9007004F6 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		8EF9A8A816F601D9007004F6 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		8EF9A8AB16F601D9007004F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController.xib; sourceTree = "<group>"; };
+		8EF9A8B416F601F9007004F6 /* KRCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KRCamera.h; sourceTree = "<group>"; };
+		8EF9A8B516F601F9007004F6 /* KRCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KRCamera.m; sourceTree = "<group>"; };
+		8EF9A8B616F601F9007004F6 /* KRCamera.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KRCamera.xib; sourceTree = "<group>"; };
+		8EF9A8BA16F60605007004F6 /* KRCamera_iPhone5.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KRCamera_iPhone5.xib; sourceTree = "<group>"; };
+		8EF9A8BC16F60698007004F6 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		8EF9A8BE16F6069D007004F6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		8EF9A8C016F606A5007004F6 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		8EF9A8C216F606AE007004F6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		8EF9A8C416F606BE007004F6 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		8EF9A8C616F606CD007004F6 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8EF9A88916F601D9007004F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8EF9A8C716F606CD007004F6 /* MobileCoreServices.framework in Frameworks */,
+				8EF9A8C316F606AE007004F6 /* CoreLocation.framework in Frameworks */,
+				8EF9A8C116F606A6007004F6 /* MapKit.framework in Frameworks */,
+				8EF9A8BF16F6069D007004F6 /* ImageIO.framework in Frameworks */,
+				8EF9A8BD16F60698007004F6 /* AssetsLibrary.framework in Frameworks */,
+				8EF9A89016F601D9007004F6 /* UIKit.framework in Frameworks */,
+				8EF9A89216F601D9007004F6 /* Foundation.framework in Frameworks */,
+				8EF9A89416F601D9007004F6 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8EF9A88316F601D9007004F6 = {
+			isa = PBXGroup;
+			children = (
+				8EF9A8B216F601F9007004F6 /* Classes */,
+				8EF9A89516F601D9007004F6 /* ios-KRCamera */,
+				8EF9A89616F601D9007004F6 /* Supporting Files */,
+				8EF9A88E16F601D9007004F6 /* Frameworks */,
+				8EF9A88D16F601D9007004F6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8EF9A88D16F601D9007004F6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8EF9A88C16F601D9007004F6 /* ios-KRCamera.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8EF9A88E16F601D9007004F6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8EF9A8C816F606D9007004F6 /* Camera */,
+				8EF9A89316F601D9007004F6 /* CoreGraphics.framework */,
+				8EF9A89116F601D9007004F6 /* Foundation.framework */,
+				8EF9A88F16F601D9007004F6 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8EF9A89516F601D9007004F6 /* ios-KRCamera */ = {
+			isa = PBXGroup;
+			children = (
+				8EF9A8B916F6042C007004F6 /* AppDelegate */,
+				8EF9A8A716F601D9007004F6 /* ViewController.h */,
+				8EF9A8A816F601D9007004F6 /* ViewController.m */,
+				8EF9A8AA16F601D9007004F6 /* ViewController.xib */,
+			);
+			path = "ios-KRCamera";
+			sourceTree = "<group>";
+		};
+		8EF9A89616F601D9007004F6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8EF9A89716F601D9007004F6 /* ios-KRCamera-Info.plist */,
+				8EF9A89816F601D9007004F6 /* InfoPlist.strings */,
+				8EF9A89B16F601D9007004F6 /* main.m */,
+				8EF9A89D16F601D9007004F6 /* ios-KRCamera-Prefix.pch */,
+				8EF9A8A116F601D9007004F6 /* Default.png */,
+				8EF9A8A316F601D9007004F6 /* Default@2x.png */,
+				8EF9A8A516F601D9007004F6 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			path = "ios-KRCamera";
+			sourceTree = "<group>";
+		};
+		8EF9A8B216F601F9007004F6 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				8EF9A8B316F601F9007004F6 /* KRCamera */,
+			);
+			name = Classes;
+			path = "ios-KRCamera/Classes";
+			sourceTree = "<group>";
+		};
+		8EF9A8B316F601F9007004F6 /* KRCamera */ = {
+			isa = PBXGroup;
+			children = (
+				8EF9A8B416F601F9007004F6 /* KRCamera.h */,
+				8EF9A8B516F601F9007004F6 /* KRCamera.m */,
+				8EF9A8B616F601F9007004F6 /* KRCamera.xib */,
+				8EF9A8BA16F60605007004F6 /* KRCamera_iPhone5.xib */,
+			);
+			path = KRCamera;
+			sourceTree = "<group>";
+		};
+		8EF9A8B916F6042C007004F6 /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				8EF9A89E16F601D9007004F6 /* AppDelegate.h */,
+				8EF9A89F16F601D9007004F6 /* AppDelegate.m */,
+			);
+			name = AppDelegate;
+			sourceTree = "<group>";
+		};
+		8EF9A8C816F606D9007004F6 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				8EF9A8BC16F60698007004F6 /* AssetsLibrary.framework */,
+				8EF9A8C216F606AE007004F6 /* CoreLocation.framework */,
+				8EF9A8BE16F6069D007004F6 /* ImageIO.framework */,
+				8EF9A8C016F606A5007004F6 /* MapKit.framework */,
+				8EF9A8C416F606BE007004F6 /* MediaPlayer.framework */,
+				8EF9A8C616F606CD007004F6 /* MobileCoreServices.framework */,
+			);
+			name = Camera;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8EF9A88B16F601D9007004F6 /* ios-KRCamera */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8EF9A8AF16F601D9007004F6 /* Build configuration list for PBXNativeTarget "ios-KRCamera" */;
+			buildPhases = (
+				8EF9A88816F601D9007004F6 /* Sources */,
+				8EF9A88916F601D9007004F6 /* Frameworks */,
+				8EF9A88A16F601D9007004F6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ios-KRCamera";
+			productName = "ios-KRCamera";
+			productReference = 8EF9A88C16F601D9007004F6 /* ios-KRCamera.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8EF9A88416F601D9007004F6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Kuo-Ming Lin";
+			};
+			buildConfigurationList = 8EF9A88716F601D9007004F6 /* Build configuration list for PBXProject "ios-KRCamera" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 8EF9A88316F601D9007004F6;
+			productRefGroup = 8EF9A88D16F601D9007004F6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8EF9A88B16F601D9007004F6 /* ios-KRCamera */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8EF9A88A16F601D9007004F6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8EF9A89A16F601D9007004F6 /* InfoPlist.strings in Resources */,
+				8EF9A8A216F601D9007004F6 /* Default.png in Resources */,
+				8EF9A8A416F601D9007004F6 /* Default@2x.png in Resources */,
+				8EF9A8A616F601D9007004F6 /* Default-568h@2x.png in Resources */,
+				8EF9A8AC16F601D9007004F6 /* ViewController.xib in Resources */,
+				8EF9A8B816F601F9007004F6 /* KRCamera.xib in Resources */,
+				8EF9A8BB16F60605007004F6 /* KRCamera_iPhone5.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8EF9A88816F601D9007004F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8EF9A89C16F601D9007004F6 /* main.m in Sources */,
+				8EF9A8A016F601D9007004F6 /* AppDelegate.m in Sources */,
+				8EF9A8A916F601D9007004F6 /* ViewController.m in Sources */,
+				8EF9A8B716F601F9007004F6 /* KRCamera.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		8EF9A89816F601D9007004F6 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8EF9A89916F601D9007004F6 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		8EF9A8AA16F601D9007004F6 /* ViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8EF9A8AB16F601D9007004F6 /* en */,
+			);
+			name = ViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8EF9A8AD16F601D9007004F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		8EF9A8AE16F601D9007004F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8EF9A8B016F601D9007004F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: KUO-MING LIN (LJ8A4ND325)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: KUO-MING LIN (LJ8A4ND325)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ios-KRCamera/ios-KRCamera-Prefix.pch";
+				INFOPLIST_FILE = "ios-KRCamera/ios-KRCamera-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "45A4B2AB-4CFC-40ED-A339-02F478CE034A";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "45A4B2AB-4CFC-40ED-A339-02F478CE034A";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		8EF9A8B116F601D9007004F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: KUO-MING LIN (LJ8A4ND325)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: KUO-MING LIN (LJ8A4ND325)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ios-KRCamera/ios-KRCamera-Prefix.pch";
+				INFOPLIST_FILE = "ios-KRCamera/ios-KRCamera-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "45A4B2AB-4CFC-40ED-A339-02F478CE034A";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "45A4B2AB-4CFC-40ED-A339-02F478CE034A";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8EF9A88716F601D9007004F6 /* Build configuration list for PBXProject "ios-KRCamera" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8EF9A8AD16F601D9007004F6 /* Debug */,
+				8EF9A8AE16F601D9007004F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8EF9A8AF16F601D9007004F6 /* Build configuration list for PBXNativeTarget "ios-KRCamera" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8EF9A8B016F601D9007004F6 /* Debug */,
+				8EF9A8B116F601D9007004F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8EF9A88416F601D9007004F6 /* Project object */;
+}
