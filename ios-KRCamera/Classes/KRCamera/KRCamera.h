@@ -25,8 +25,9 @@ typedef enum _KRCameraModes {
 //截取影片示意圖用,需加入MediaPlayer.framework
 //#import <MediaPlayer/MediaPlayer.h>
 
-@interface KRCamera : UIViewController<UIImagePickerControllerDelegate, UINavigationControllerDelegate>{
-    UIViewController *parentTarget;
+@interface KRCamera : UIViewController<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+{
+    id parentTarget;
     id<KRCameraDelegate> __weak KRCameraDelegate;
     UIImagePickerController *imagePicker;
     //選擇使用"拍照"或"檔案選取"方式
@@ -61,7 +62,7 @@ typedef enum _KRCameraModes {
     
 }
 
-@property (nonatomic, strong) UIViewController *parentTarget;
+@property (nonatomic, strong) id parentTarget;
 @property (nonatomic, weak) id<KRCameraDelegate> KRCameraDelegate;
 @property (nonatomic, strong) UIImagePickerController *imagePicker;
 @property (nonatomic, assign) KRCameraModes sourceMode;

@@ -211,19 +211,19 @@
 
 -(void)_initWithVars
 {
-    self.parentTarget   = nil;
-    self.sourceMode     = KRCameraModesForCamera;
-    self.isOpenVideo    = YES;
-    self.isAllowSave    = YES;
-    self.isAllowEditing = NO;
-    self.videoQuality   = UIImagePickerControllerQualityTypeHigh;
-    self.videoMaxSeconeds = 15;
-    self.videoMaxDuration = -1;
-    imagePicker           = [[UIImagePickerController alloc] init];
-    //savedImage          = [[UIImage alloc] init];
-    //videoUrl            = [[NSURL alloc] init];
-    self.isOnlyVideo      = NO;
-    self.autoClose        = YES;
+    self.parentTarget       = nil;
+    self.sourceMode         = KRCameraModesForCamera;
+    self.isOpenVideo        = YES;
+    self.isAllowSave        = YES;
+    self.isAllowEditing     = NO;
+    self.videoQuality       = UIImagePickerControllerQualityTypeHigh;
+    self.videoMaxSeconeds   = 15;
+    self.videoMaxDuration   = -1;
+    imagePicker             = [[UIImagePickerController alloc] init];
+    //savedImage            = [[UIImage alloc] init];
+    //videoUrl              = [[NSURL alloc] init];
+    self.isOnlyVideo        = NO;
+    self.autoClose          = YES;
     self.showCameraControls = YES;
     
 }
@@ -358,9 +358,8 @@
     //imagePicker = [[UIImagePickerController alloc] init];
     //[self _resetTempMemories];
     //要隱藏 StatusBar，否則會 StatusBar 一定會消失並空缺位置出來 ( UIImagePicker 的官方 Bugs )
-    [self _appearStatusBar:NO];
+    //[self _appearStatusBar:NO];
     imagePicker.delegate = self;
-    imagePicker.allowsEditing = self.isAllowEditing;
     switch ( self.sourceMode ) {
         case KRCameraModesForCamera:
             //拍照或錄影
@@ -441,8 +440,10 @@
     if( imagePicker.view.superview == self.view ){
         [imagePicker.view removeFromSuperview];
     }
+    [self _appearStatusBar:NO];
     [self.view addSubview:imagePicker.view];
-    //[imagePicker release];
+    imagePicker.allowsEditing       = self.isAllowEditing;
+    imagePicker.showsCameraControls = self.showCameraControls;
     
     /*
      //@用這裡超單純的呼叫相機，拍照也還是會出現 Memory Warning XD
@@ -487,7 +488,9 @@
     //[imagePicker dismissViewControllerAnimated:YES completion:nil];
     //[self remove];
     if( self.autoClose ){
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [self dismissViewControllerAnimated:YES completion:^{
+            //[self _appearStatusBar:YES];
+        }];
     }
 }
 

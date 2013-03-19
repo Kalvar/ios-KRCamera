@@ -40,6 +40,7 @@
 {
     self._krCamera.isOpenVideo = NO;
     self._krCamera.sourceMode  = KRCameraModesForCamera;
+    self._krCamera.showCameraControls = YES;
     [self._krCamera start];
     [self presentViewController:self._krCamera animated:YES completion:nil];
 }
