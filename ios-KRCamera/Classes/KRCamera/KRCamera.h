@@ -4,7 +4,7 @@
 //  ilovekalvar@gmail.com
 //
 //  Created by Kuo-Ming Lin on 2012/08/01.
-//  Copyright (c) 2012年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
 //
 
 
@@ -25,11 +25,11 @@ typedef enum _KRCameraModes {
 //截取影片示意圖用,需加入MediaPlayer.framework
 //#import <MediaPlayer/MediaPlayer.h>
 
-@interface KRCamera : UIViewController<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface KRCamera : UIImagePickerController<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 {
     id parentTarget;
     id<KRCameraDelegate> __weak KRCameraDelegate;
-    UIImagePickerController *imagePicker;
+    //UIImagePickerController *imagePicker;
     //選擇使用"拍照"或"檔案選取"方式
     KRCameraModes sourceMode;
     //開啟或關閉影片(鏡頭)功能
@@ -50,21 +50,23 @@ typedef enum _KRCameraModes {
     int videoMaxDuration;
     //是否只開啟錄影功能
     BOOL isOnlyVideo;
+    //是否自動縮下
+    BOOL autoDismissPresent;
     //是否自動關閉
-    BOOL autoClose;
+    BOOL autoRemoveFromSuperview;
     /*
      * 是否使用自訂義的 Toolbar 控制列 ?
      * 也就是原先官方的拍照按鈕會消失，而能改放自已客製化的按鈕上去，
      * 之後，使用自訂義的拍照按鈕時，就會直接進行拍照的 Delegate 和動作，
      * 而不會再進入「Preview」的確認畫面了。
      */
-    BOOL showCameraControls;
+    BOOL displaysCameraControls;
     
 }
 
 @property (nonatomic, strong) id parentTarget;
 @property (nonatomic, weak) id<KRCameraDelegate> KRCameraDelegate;
-@property (nonatomic, strong) UIImagePickerController *imagePicker;
+//@property (nonatomic, strong) UIImagePickerController *imagePicker;
 @property (nonatomic, assign) KRCameraModes sourceMode;
 @property (nonatomic, assign) BOOL isOpenVideo;
 @property (nonatomic, assign) BOOL isAllowSave;
@@ -75,30 +77,48 @@ typedef enum _KRCameraModes {
 @property (nonatomic, assign) BOOL isAllowEditing;
 @property (nonatomic, assign) int videoMaxDuration;
 @property (nonatomic, assign) BOOL isOnlyVideo;
-@property (nonatomic, assign) BOOL autoClose;
-@property (nonatomic, assign) BOOL showCameraControls;
+@property (nonatomic, assign) BOOL autoDismissPresent;
+@property (nonatomic, assign) BOOL autoRemoveFromSuperview;
+@property (nonatomic, assign) BOOL displaysCameraControls;
 
--(id)initWithDelete:(id<KRCameraDelegate>)_delegate pickerMode:(KRCameraModes)_pickerMode;
--(id)initWithDelegate:(id<KRCameraDelegate>)_delegate;
--(void)start;
+-(id)initWithDelete:(id<KRCameraDelegate>)_krCameraDelegate pickerMode:(KRCameraModes)_pickerMode;
+-(id)initWithDelegate:(id<KRCameraDelegate>)_krCameraDelegate;
+//
+-(void)startChoose;
+-(void)startCamera;
+-(void)wantToFullScreen;
 -(void)remove;
 -(void)cancel;
--(void)takePicture;
+-(void)takeOnePicture;
+//
+-(void)hideStatusBar;
+-(void)showStatusBar;
 
 @end
 
 @protocol KRCameraDelegate <NSObject>
 
 @optional
-//選取圖片、影片完成時 || 拍完照、錄完影後，要在這裡進行檔案的轉換、處理與儲存
+/*
+ * @ 原始選取圖片、影片完成時，或拍完照、錄完影後
+ *   - 要在這裡進行檔案的轉換、處理與儲存
+ */
 -(void)krCameraDidFinishPickingMediaWithInfo:(NSDictionary *)_infos imagePickerController:(UIImagePickerController *)_imagePicker;
-//對象是圖片
+/*
+ * @ 對象是圖片
+ */
 -(void)krCameraDidFinishPickingImage:(UIImage *)_image imagePath:(NSString *)_imagePath imagePickerController:(UIImagePickerController *)_imagePicker;
-//對象是圖片並包含 EXIF / TIFF 等 MetaData 資訊
+/*
+ * @ 對象是圖片並包含 EXIF / TIFF 等 MetaData 資訊
+ */
 -(void)krCameraDidFinishPickingImage:(UIImage *)_image imagePath:(NSString *)_imagePath metadata:(NSDictionary *)_metadatas imagePickerController:(UIImagePickerController *)_imagePicker;
-//對象是影片
+/*
+ * @ 對象是影片
+ */
 -(void)krCameraDidFinishPickingVideoPath:(NSString *)_videoPath imagePickerController:(UIImagePickerController *)_imagePicker;
-//按下取消時
+/*
+ * @ 按下取消時
+ */
 -(void)krCameraDidCancel:(UIImagePickerController *)_imagePicker;
 
 

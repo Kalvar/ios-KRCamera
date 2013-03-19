@@ -4,7 +4,7 @@
 //  ilovekalvar@gmail.com
 //
 //  Created by Kuo-Ming Lin on 2012/08/01.
-//  Copyright (c) 2012年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
 //
 
 #import "KRCamera.h"
@@ -66,7 +66,7 @@
                              if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] ){
                                  [self.KRCameraDelegate krCameraDidFinishPickingImage:image
                                                                               imagePath:[NSString stringWithFormat:@"%@", assetURL]
-                                                                  imagePickerController:self.imagePicker];
+                                                                  imagePickerController:self];
                              }
                          } else {
                              // handle error
@@ -200,9 +200,9 @@
 
 -(void)_initWithVars;
 -(BOOL)_isIphone5;
--(id)_loadSelf;
 -(void)_appearStatusBar:(BOOL)_isAppear;
 -(NSString *)_resetVideoPath:(NSString *)_videoPath;
+-(void)_setupConfigs;
 //-(void)_resetTempMemories;
 
 @end
@@ -219,12 +219,16 @@
     self.videoQuality       = UIImagePickerControllerQualityTypeHigh;
     self.videoMaxSeconeds   = 15;
     self.videoMaxDuration   = -1;
-    imagePicker             = [[UIImagePickerController alloc] init];
+    //imagePicker           = [[UIImagePickerController alloc] init];
     //savedImage            = [[UIImage alloc] init];
     //videoUrl              = [[NSURL alloc] init];
     self.isOnlyVideo        = NO;
-    self.autoClose          = YES;
-    self.showCameraControls = YES;
+    self.displaysCameraControls = YES;
+    /*
+     * @ 因為有自訂自已的 Setter
+     */
+    autoDismissPresent      = NO;
+    autoRemoveFromSuperview = NO;
     
 }
 
@@ -240,21 +244,13 @@
     return NO;
 }
 
--(id)_loadSelf
+-(void)_appearStatusBar:(BOOL)_isAppear
 {
-    NSString *_xibName = @"KRCamera";
-    if( [self _isIphone5] )
-    {
-        _xibName = @"KRCamera_iPhone5";
-    }
-    return [super initWithNibName:_xibName bundle:nil];
-}
-
--(void)_appearStatusBar:(BOOL)_isAppear{
     [[UIApplication sharedApplication] setStatusBarHidden:!_isAppear];
 }
 
--(NSString *)_resetVideoPath:(NSString *)_videoPath{
+-(NSString *)_resetVideoPath:(NSString *)_videoPath
+{
     //Temperatue Path of Recorded Video 
     ///private/var/mobile/Applications/F5D3F6CE-DD41-4FF1-94A4-9C0EBAC70AA3/tmp/capture-T0x232520.tmp.GL1Fg5/capturedvideo.MOV
     NSString *_rePath = @"";
@@ -269,13 +265,94 @@
     return _rePath;
 }
 
+-(void)_setupConfigs
+{
+    //[self _resetTempMemories];
+    //[self _appearStatusBar:NO];
+    self.delegate      = self;
+    self.allowsEditing = self.isAllowEditing;
+    switch ( self.sourceMode ) {
+        case KRCameraModesForCamera:
+            //拍照或錄影
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
+                self.sourceType = UIImagePickerControllerSourceTypeCamera;
+                //self.showsCameraControls = self.showCameraControls;
+                //有錄影功能
+                if ( self.isOpenVideo ) {
+                    //只拍影片
+                    if( self.isOnlyVideo ){
+                        //限定相簿只能顯示影片檔
+                        self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
+                    }else{
+                        //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
+                        self.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
+                    }
+                    //設定影片品質
+                    [self setVideoQuality:self.videoQuality];
+                    //設定最大錄影時間(秒)
+                    [self setVideoMaximumDuration:self.videoMaxSeconeds];
+                }else{
+                    self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
+                }
+            }
+            self.isAllowSave = YES;
+            break;
+        case KRCameraModesForSelectAlbum:
+            //從相簿選取
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+                self.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                if ( self.isOpenVideo ) {
+                    if( self.isOnlyVideo ){
+                        //限定相簿只能顯示影片檔
+                        self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
+                    }else{
+                        //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
+                        self.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
+                    }
+                    //有指定取出的影片長度
+                    if( self.videoMaxDuration > 0 ){
+                        //一定要允許編輯
+                        self.allowsEditing = YES;
+                        self.videoMaximumDuration = self.videoMaxDuration;
+                    }
+                }else{
+                    self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
+                }
+            }
+            //從本機選取就不用再重複儲存檔案
+            self.isAllowSave = NO;
+            break;
+        case KRCameraModesForAllPhotos:
+            //直接呈現全部的照片
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum]) {
+                self.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+                if ( self.isOpenVideo ) {
+                    if( self.isOnlyVideo ){
+                        //限定相簿只能顯示影片檔
+                        self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
+                    }else{
+                        //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
+                        self.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
+                    }
+                    if( self.videoMaxDuration > 0 ){
+                        self.allowsEditing = YES;
+                        self.videoMaximumDuration = self.videoMaxDuration;
+                    }
+                }else{
+                    self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
+                }
+            }
+            self.isAllowSave = NO;
+            break;
+    }
+}
+
 @end
 
 @implementation KRCamera
 
 @synthesize parentTarget;
 @synthesize KRCameraDelegate;
-@synthesize imagePicker;
 @synthesize sourceMode;
 @synthesize isOpenVideo;
 @synthesize isAllowSave;
@@ -286,30 +363,33 @@
             videoMaxDuration;
 @synthesize isAllowEditing;
 @synthesize isOnlyVideo;
-@synthesize autoClose;
-@synthesize showCameraControls;
+@synthesize autoDismissPresent      = _autoDismissPresent;
+@synthesize autoRemoveFromSuperview = _autoRemoveFromSuperview;
+@synthesize displaysCameraControls;
 
--(id)initWithDelete:(id<KRCameraDelegate>)_delegate pickerMode:(KRCameraModes)_pickerMode{
-    self = [self _loadSelf];
-    if( self ){
-        [self _initWithVars];
-        self.KRCameraDelegate = _delegate;
-        self.sourceMode = _pickerMode;
-    }
-    return self;
-}
-
--(id)initWithDelegate:(id<KRCameraDelegate>)_delegate
+-(id)initWithDelete:(id<KRCameraDelegate>)_krCameraDelegate pickerMode:(KRCameraModes)_pickerMode
 {
-    self = [self _loadSelf];
+    self = [super init];
     if( self ){
         [self _initWithVars];
-        self.KRCameraDelegate = _delegate;
+        self.KRCameraDelegate = _krCameraDelegate;
+        self.sourceMode       = _pickerMode;
     }
     return self;
 }
 
--(id)init{
+-(id)initWithDelegate:(id<KRCameraDelegate>)_krCameraDelegate
+{
+    self = [super init];
+    if( self ){
+        [self _initWithVars];
+        self.KRCameraDelegate = _krCameraDelegate;
+    }
+    return self;
+}
+
+-(id)init
+{
     self = [super init];
     if( self ){
         [self _initWithVars];
@@ -328,16 +408,14 @@
 
 - (void)viewDidLoad
 {
-    
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    
 }
 
 - (void)viewDidUnload
 {
-    //NSLog(@"KRCamera viewDidUnload");
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -345,133 +423,48 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
--(void)didReceiveMemoryWarning{
+-(void)didReceiveMemoryWarning
+{
     //we're too important to get flushed out by our child imagepicker.
     [super didReceiveMemoryWarning];
     
 }
 
-
-#pragma My Methods
-//在拍照時就會 Received memory warning. 似乎是陳年的老 Bugs 真怪了 = =
--(void)start{
-    //imagePicker = [[UIImagePickerController alloc] init];
-    //[self _resetTempMemories];
-    //要隱藏 StatusBar，否則會 StatusBar 一定會消失並空缺位置出來 ( UIImagePicker 的官方 Bugs )
-    //[self _appearStatusBar:NO];
-    imagePicker.delegate = self;
-    switch ( self.sourceMode ) {
-        case KRCameraModesForCamera:
-            //拍照或錄影
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
-                imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-                imagePicker.showsCameraControls = self.showCameraControls;
-                //有錄影功能
-                if ( self.isOpenVideo ) {
-                    //只拍影片
-                    if( self.isOnlyVideo ){
-                        //限定相簿只能顯示影片檔
-                        imagePicker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
-                    }else{
-                        //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
-                        imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
-                    }
-                    //設定影片品質
-                    [imagePicker setVideoQuality:self.videoQuality];
-                    //設定最大錄影時間(秒)
-                    [imagePicker setVideoMaximumDuration:self.videoMaxSeconeds];
-                }else{
-                    imagePicker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
-                }
-            }
-            self.isAllowSave = YES;
-            break;
-        case KRCameraModesForSelectAlbum:
-            //從相簿選取
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-                imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-                if ( self.isOpenVideo ) {
-                    if( self.isOnlyVideo ){
-                        //限定相簿只能顯示影片檔
-                        imagePicker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
-                    }else{
-                        //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
-                        imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
-                    }
-                    //有指定取出的影片長度
-                    if( self.videoMaxDuration > 0 ){
-                        //一定要允許編輯
-                        imagePicker.allowsEditing = YES;
-                        imagePicker.videoMaximumDuration = self.videoMaxDuration;
-                    }
-                }else{
-                    imagePicker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
-                }
-            }
-            //從本機選取就不用再重複儲存檔案
-            self.isAllowSave = NO;
-            break;
-        case KRCameraModesForAllPhotos:
-            //直接呈現全部的照片
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum]) {
-                imagePicker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-                if ( self.isOpenVideo ) {
-                    if( self.isOnlyVideo ){
-                        //限定相簿只能顯示影片檔
-                        imagePicker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
-                    }else{
-                        //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
-                        imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
-                    }
-                    if( self.videoMaxDuration > 0 ){
-                        imagePicker.allowsEditing = YES;
-                        imagePicker.videoMaximumDuration = self.videoMaxDuration;
-                    }
-                }else{
-                    imagePicker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
-                }
-            }
-            self.isAllowSave = NO;
-            break;
-    }
-    
-    //[self presentModalViewController:imagePicker animated:YES];
-    //[self.parentTarget presentViewController:imagePicker animated:YES completion:nil];
-    if( imagePicker.view.superview == self.view ){
-        [imagePicker.view removeFromSuperview];
-    }
-    [self _appearStatusBar:NO];
-    [self.view addSubview:imagePicker.view];
-    imagePicker.allowsEditing       = self.isAllowEditing;
-    imagePicker.showsCameraControls = self.showCameraControls;
-    
-    /*
-     //@用這裡超單純的呼叫相機，拍照也還是會出現 Memory Warning XD
-     
-     //建立選取器
-     imagePicker = [[UIImagePickerController alloc] init];
-     //選取器的委派
-     imagePicker.delegate = self;
-     //選取器要進行動作的對象來源 : 手機相簿(PhotoLibrary) :: 共有 PhotoLibrary, Camera, SavedAlbum
-     imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-     //選取器要進行動作的限定媒體檔類型
-     //只能顯示圖片檔
-     imagePicker.mediaTypes = [NSArray arrayWithObject:@"public.image"];
-     //是否允許修改操作 ? NO : 點圖就完成選取 :: YES : 點圖還會進到修改畫面
-     imagePicker.allowsEditing = NO;
-     
-     //顯示選取器
-     [self presentModalViewController:imagePicker animated:YES];
-     
-     [imagePicker release];
-     return;
-     */
+#pragma MyMethods
+/*
+ * @ 執行相簿選擇
+ */
+-(void)startChoose
+{
+    [self _setupConfigs];
 }
 
--(void)remove{
-    if( imagePicker.view.superview == self.view ){
-        [imagePicker.view removeFromSuperview];
+/*
+ * @ 執行相機
+ *   - 在拍照時就會 Received memory warning. 似乎是陳年的老 Bugs 真怪了 = =
+ */
+-(void)startCamera
+{
+    [self _setupConfigs];
+    self.showsCameraControls = self.displaysCameraControls;
+    CGRect _frame = self.view.frame;
+    if( _frame.origin.y > 0.0f || _frame.origin.y < 0.0f )
+    {
+        _frame.origin.y = 0.0f;
     }
+    [self.view setFrame:_frame];
+}
+
+-(void)wantToFullScreen
+{
+    [self hideStatusBar];
+}
+
+/*
+ * @ 移除
+ */
+-(void)remove
+{
     if( self.view.superview ){
         [self.view removeFromSuperview];
     }
@@ -480,26 +473,82 @@
     }
 }
 
--(void)cancel{
-    [self _appearStatusBar:YES];
+/*
+ * @ 向下縮
+ */
+-(void)cancel
+{
     //如使用睡眠後，才 dissmissView 的話，會產生 10004003 的 warning.
     //[NSThread sleepForTimeInterval:0.5];
-    //按下取消鍵的事件
-    //[imagePicker dismissViewControllerAnimated:YES completion:nil];
-    //[self remove];
-    if( self.autoClose ){
+    if( self.autoRemoveFromSuperview )
+    {
+        [self remove];
+    }
+    if( self.autoDismissPresent )
+    {
         [self dismissViewControllerAnimated:YES completion:^{
-            //[self _appearStatusBar:YES];
+            [self showStatusBar];
         }];
     }
 }
 
--(void)takePicture{
-    [self.imagePicker takePicture];
+/*
+ * @ 拍照
+ */
+-(void)takeOnePicture
+{
+    [super takePicture];
+    /*
+    //@用這裡超單純的呼叫相機，拍照也還是會出現 Memory Warning XD
+    //建立選取器
+    imagePicker = [[UIImagePickerController alloc] init];
+    //選取器的委派
+    imagePicker.delegate = self;
+    //選取器要進行動作的對象來源 : 手機相簿(PhotoLibrary) :: 共有 PhotoLibrary, Camera, SavedAlbum
+    imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    //選取器要進行動作的限定媒體檔類型
+    //只能顯示圖片檔
+    imagePicker.mediaTypes = [NSArray arrayWithObject:@"public.image"];
+    //是否允許修改操作 ? NO : 點圖就完成選取 :: YES : 點圖還會進到修改畫面
+    imagePicker.allowsEditing = NO;
+    //顯示選取器
+    [self presentModalViewController:imagePicker animated:YES];
+    return;
+    */
+}
+
+/*
+ * @ 隱藏狀態列
+ */
+-(void)hideStatusBar
+{
+    [self _appearStatusBar:NO];
+}
+
+/*
+ * @ 顯示狀態列
+ */
+-(void)showStatusBar
+{
+    [self _appearStatusBar:YES];
+}
+
+#pragma Setters
+-(void)setAutoDismissPresent:(BOOL)_theAutoDismissPresent
+{
+    _autoDismissPresent = _theAutoDismissPresent;
+    //_autoRemoveFromSuperview = !_autoDismissPresent;
+}
+
+-(void)setAutoRemoveFromSuperview:(BOOL)_theAutoRemoveFromSuperview
+{
+    _autoRemoveFromSuperview = _theAutoRemoveFromSuperview;
+    //_autoDismissPresent = !_autoRemoveFromSuperview;
 }
 
 #pragma UIImagePickerDelegate
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
     if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingMediaWithInfo:imagePickerController:)] ){
         [self.KRCameraDelegate krCameraDidFinishPickingMediaWithInfo:info imagePickerController:picker];
     }
@@ -577,7 +626,8 @@
     [self cancel];
 }
 
--(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
     [self cancel];
     if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidCancel:)] ){
         [self.KRCameraDelegate krCameraDidCancel:picker];
