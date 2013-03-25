@@ -28,6 +28,7 @@
      *   - 就要在 viewDidLoad 這裡先執行 wantToFullScreen 函式將狀態列隱藏 ( Hide the Status Bar )。
      */
     [self._krCamera wantToFullScreen];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -46,7 +47,7 @@
     self._krCamera.sourceMode              = KRCameraModesForCamera;
     self._krCamera.autoDismissPresent      = NO;
     self._krCamera.autoRemoveFromSuperview = YES;
-    self._krCamera.displaysCameraControls  = YES;
+    self._krCamera.displaysCameraControls  = NO;
     [self._krCamera startCamera];
     /*
      * @ 如果要用 presentViewController 的模式啟動相機，就不需要在 viewDidLoad 裡執行 wantToFullScreen 方法。

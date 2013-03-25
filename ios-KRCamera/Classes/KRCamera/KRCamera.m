@@ -25,7 +25,8 @@
 @implementation KRCamera (saveToAlbum)
 
 //儲存帶有 EXIF, TIFF 等資訊的圖片至相簿
--(void)saveImageAndAddMetadata:(UIImage *)image{
+-(void)saveImageAndAddMetadata:(UIImage *)image
+{
     // Format the current date and time
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyy:MM:dd HH:mm:ss"];
@@ -214,12 +215,11 @@
     self.parentTarget       = nil;
     self.sourceMode         = KRCameraModesForCamera;
     self.isOpenVideo        = YES;
-    self.isAllowSave        = YES;
+    self.allowsSaveFile     = YES;
     self.isAllowEditing     = NO;
     self.videoQuality       = UIImagePickerControllerQualityTypeHigh;
     self.videoMaxSeconeds   = 15;
     self.videoMaxDuration   = -1;
-    //imagePicker           = [[UIImagePickerController alloc] init];
     //savedImage            = [[UIImage alloc] init];
     //videoUrl              = [[NSURL alloc] init];
     self.isOnlyVideo        = NO;
@@ -295,7 +295,7 @@
                     self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
                 }
             }
-            self.isAllowSave = YES;
+            self.allowsSaveFile = YES;
             break;
         case KRCameraModesForSelectAlbum:
             //從相簿選取
@@ -320,7 +320,7 @@
                 }
             }
             //從本機選取就不用再重複儲存檔案
-            self.isAllowSave = NO;
+            self.allowsSaveFile = NO;
             break;
         case KRCameraModesForAllPhotos:
             //直接呈現全部的照片
@@ -342,7 +342,7 @@
                     self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
                 }
             }
-            self.isAllowSave = NO;
+            self.allowsSaveFile = NO;
             break;
     }
 }
@@ -355,9 +355,7 @@
 @synthesize KRCameraDelegate;
 @synthesize sourceMode;
 @synthesize isOpenVideo;
-@synthesize isAllowSave;
-//@synthesize savedImage;
-//@synthesize videoUrl;
+@synthesize allowsSaveFile;
 @synthesize videoQuality,
             videoMaxSeconeds,
             videoMaxDuration;
@@ -366,6 +364,8 @@
 @synthesize autoDismissPresent      = _autoDismissPresent;
 @synthesize autoRemoveFromSuperview = _autoRemoveFromSuperview;
 @synthesize displaysCameraControls;
+//@synthesize savedImage;
+//@synthesize videoUrl;
 
 -(id)initWithDelete:(id<KRCameraDelegate>)_krCameraDelegate pickerMode:(KRCameraModes)_pickerMode
 {
@@ -560,7 +560,7 @@
             NSURL *videoUrl     = [info objectForKey:UIImagePickerControllerMediaURL];
             NSString *videoPath = videoUrl.path;
             ///*
-            if (self.isAllowSave) {
+            if (self.allowsSaveFile) {
                 //直接存至相簿
                 UISaveVideoAtPathToSavedPhotosAlbum(videoPath, self, nil, nil);
             }
@@ -571,7 +571,7 @@
             }
              //*/
             /*
-            if (self.isAllowSave) {
+            if (self.allowsSaveFile) {
                 //這樣才能取到正確儲存後的 Video Path ( 但取到的 Path 必須用 Asset 解析 ...  )
                 ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
                 [library writeVideoAtPathToSavedPhotosAlbum:videoUrl
@@ -597,7 +597,7 @@
              */
         }else if ([mediaType isEqualToString:@"public.image"]) {
             //來源為圖片
-            if (self.isAllowSave) {
+            if (self.allowsSaveFile) {
                 [self _writeToAlbum:info imagePicker:picker];
                 //UIImageWriteToSavedPhotosAlbum(savedImage, self, nil, nil);
             }else{
@@ -610,7 +610,7 @@
         }
     }else {
         //當關閉影片功能時
-        if (self.isAllowSave) {
+        if (self.allowsSaveFile) {
             [self _writeToAlbum:info imagePicker:picker];
             //UIImageWriteToSavedPhotosAlbum(savedImage, self, nil, nil);
         }else{

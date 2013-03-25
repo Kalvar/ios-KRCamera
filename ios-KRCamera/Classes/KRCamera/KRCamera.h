@@ -27,19 +27,14 @@ typedef enum _KRCameraModes {
 
 @interface KRCamera : UIImagePickerController<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 {
-    id parentTarget;
-    id<KRCameraDelegate> __weak KRCameraDelegate;
-    //UIImagePickerController *imagePicker;
+    __weak id parentTarget;
+    __weak id<KRCameraDelegate> KRCameraDelegate;
     //選擇使用"拍照"或"檔案選取"方式
     KRCameraModes sourceMode;
     //開啟或關閉影片(鏡頭)功能
     BOOL isOpenVideo;
     //是否儲存圖片或影片
-    BOOL isAllowSave;
-    //儲存的圖片
-    //UIImage *savedImage;
-    //儲存的影片位址
-    //NSURL *videoUrl;
+    BOOL allowsSaveFile;
     //錄影品質
     UIImagePickerControllerQualityType videoQuality;
     //錄影最大秒數
@@ -61,17 +56,17 @@ typedef enum _KRCameraModes {
      * 而不會再進入「Preview」的確認畫面了。
      */
     BOOL displaysCameraControls;
-    
+    //儲存的圖片
+    //UIImage *savedImage;
+    //儲存的影片位址
+    //NSURL *videoUrl;
 }
 
-@property (nonatomic, strong) id parentTarget;
+@property (nonatomic, weak) id parentTarget;
 @property (nonatomic, weak) id<KRCameraDelegate> KRCameraDelegate;
-//@property (nonatomic, strong) UIImagePickerController *imagePicker;
 @property (nonatomic, assign) KRCameraModes sourceMode;
 @property (nonatomic, assign) BOOL isOpenVideo;
-@property (nonatomic, assign) BOOL isAllowSave;
-//@property (nonatomic, assign) UIImage *savedImage;
-//@property (nonatomic, assign) NSURL *videoUrl;
+@property (nonatomic, assign, getter = isAllowsSaveFile) BOOL allowsSaveFile;
 @property (nonatomic, assign) UIImagePickerControllerQualityType videoQuality;
 @property (nonatomic, assign) NSUInteger videoMaxSeconeds;
 @property (nonatomic, assign) BOOL isAllowEditing;
@@ -80,6 +75,8 @@ typedef enum _KRCameraModes {
 @property (nonatomic, assign) BOOL autoDismissPresent;
 @property (nonatomic, assign) BOOL autoRemoveFromSuperview;
 @property (nonatomic, assign) BOOL displaysCameraControls;
+//@property (nonatomic, assign) UIImage *savedImage;
+//@property (nonatomic, assign) NSURL *videoUrl;
 
 -(id)initWithDelete:(id<KRCameraDelegate>)_krCameraDelegate pickerMode:(KRCameraModes)_pickerMode;
 -(id)initWithDelegate:(id<KRCameraDelegate>)_krCameraDelegate;
