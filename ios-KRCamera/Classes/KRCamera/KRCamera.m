@@ -13,6 +13,11 @@
 #import "ImageIO/CGImageProperties.h"
 #import <CoreLocation/CoreLocation.h>
 
+static NSInteger _krCameraCancelButtonTag = 2099;
+
+@interface KRCamera ()<UIPopoverControllerDelegate>
+
+@end
 
 @interface KRCamera (saveToAlbum)
 
@@ -77,7 +82,8 @@
 }
 
 //取得 GPS 定位資訊
--(NSDictionary *)getGPSDictionaryForLocation{
+-(NSDictionary *)getGPSDictionaryForLocation
+{
     //Use LocationManager to Catch the GPS locations.
     CLLocationManager *locationManager = [[CLLocationManager alloc] init];
     [locationManager startUpdatingLocation];
@@ -144,7 +150,8 @@
 }
 
 //寫入相簿裡
--(void)_writeToAlbum:(NSDictionary *)info imagePicker:(UIImagePickerController *)picker{
+-(void)_writeToAlbum:(NSDictionary *)info imagePicker:(UIImagePickerController *)picker
+{
     UIImage *savedImage = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     //儲存圖片(這樣存才能取得圖片 Path)
     ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
@@ -200,6 +207,8 @@
 @interface KRCamera (fixPrivate)
 
 -(void)_initWithVars;
+-(void)_makeiPadCancelButtonOnPopCameraView;
+-(UIImage *)_imageNameNoCache:(NSString *)_imageName;
 -(BOOL)_isIphone5;
 -(void)_appearStatusBar:(BOOL)_isAppear;
 -(NSString *)_resetVideoPath:(NSString *)_videoPath;
@@ -229,7 +238,50 @@
      */
     autoDismissPresent      = NO;
     autoRemoveFromSuperview = NO;
+    //
+    cameraPopoverController = [[UIPopoverController alloc] initWithContentViewController:self];
+    self.cameraPopoverController.delegate = self;
+    //
+    //[self _makeiPadCancelButtonOnPopCameraView];
     
+//    CGRect _frame = self.view.frame;
+//    _frame.size = CGSizeMake(768.0f, 1004.0f);
+//    [self.view setFrame:_frame];
+//    cameraPopoverController = [[UIPopoverController alloc] initWithContentViewController:self];
+//    [cameraPopoverController setPopoverContentSize:CGSizeMake(768.0f, 1004.0f)];
+    
+}
+
+-(void)_makeiPadCancelButtonOnPopCameraView
+{
+    if( [self.view viewWithTag:_krCameraCancelButtonTag] )
+    {
+        [[self.view viewWithTag:_krCameraCancelButtonTag] removeFromSuperview];
+    }
+    /*
+     * @ 寫一個取消的按鈕在這裡
+     */
+    UIButton *_button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_button setFrame:CGRectMake(20.0f, 20.0f, 60.0f, 28.0f)];
+    [_button setTag:_krCameraCancelButtonTag];
+    [_button setBackgroundColor:[UIColor clearColor]];
+    [_button setBackgroundImage:[self _imageNameNoCache:@"btn_done.png"] forState:UIControlStateNormal];
+    [_button setTitle:@"完成" forState:UIControlStateNormal];
+    [_button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_button.titleLabel setFont:[UIFont boldSystemFontOfSize:14.0f]];
+    [_button addTarget:self action:@selector(_removePopView:) forControlEvents:UIControlEventTouchUpInside];
+    //
+    [self.view addSubview:_button];
+}
+
+-(UIImage *)_imageNameNoCache:(NSString *)_imageName
+{
+    return [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] bundlePath], _imageName]];
+}
+
+-(void)_removePopView:(id)sender
+{
+    [self dismissPopover];
 }
 
 -(BOOL)_isIphone5
@@ -364,6 +416,7 @@
 @synthesize autoDismissPresent      = _autoDismissPresent;
 @synthesize autoRemoveFromSuperview = _autoRemoveFromSuperview;
 @synthesize displaysCameraControls;
+@synthesize cameraPopoverController;
 //@synthesize savedImage;
 //@synthesize videoUrl;
 
@@ -453,6 +506,9 @@
         _frame.origin.y = 0.0f;
     }
     [self.view setFrame:_frame];
+    
+    //[self.view setFrame:CGRectMake(0.0f, 0.0f, 768.0f, 1024.0f)];
+    //NSLog(@"self.view : %f, %f", self.view.frame.size.width, self.view.frame.size.height);
 }
 
 -(void)wantToFullScreen
@@ -531,6 +587,73 @@
 -(void)showStatusBar
 {
     [self _appearStatusBar:YES];
+}
+
+/*
+ * @ 使用 UIPopoverController ( 彈出提示窗 ) 才能在 iPad 上跑 UIImagePickerController
+ */
+-(void)displayPopoverFromView:(UIView *)_fromTargetView inView:(UIView *)_showInView
+{
+    self.cameraPopoverController.delegate = nil;
+    self.cameraPopoverController          = nil;
+    cameraPopoverController               = [[UIPopoverController alloc] initWithContentViewController:self];
+    self.cameraPopoverController.delegate = self;
+    
+    CGRect popoverRect = [_showInView convertRect:[_fromTargetView frame]
+                                         fromView:[_fromTargetView superview]];
+    
+    
+    //NSLog(@"popoverRect %f, %f, %f, %f", popoverRect.origin.x, popoverRect.origin.y, popoverRect.size.width, popoverRect.size.height);
+    
+    CGSize _inViewSize = _showInView.frame.size;
+    //popoverRect.size.height = self.view.frame.size.height;
+    popoverRect.origin.y    = _inViewSize.height; //popoverRect.size.height;
+    
+    //popoverRect.size = CGSizeMake(768.0f, 800.0f);
+    //popoverRect.origin = CGPointMake(0.0f, 0.0f);
+    //NSLog(@"_inViewSize %f, %f\n\n", _inViewSize.width, _inViewSize.height);
+    
+    //CGRectMake(0, 0, 300, 300)
+    [self.cameraPopoverController presentPopoverFromRect:popoverRect
+                                                  inView:_showInView
+                                permittedArrowDirections:UIPopoverArrowDirectionDown
+                                                animated:YES];
+    
+    //設定 Pop 裡的 SubView Size.
+    //[self.cameraPopoverController.contentViewController setContentSizeForViewInPopover:_inViewSize];
+    [self.cameraPopoverController setPopoverContentSize:_inViewSize animated:YES];
+    
+    /*
+     * @ 是相機就寫入「完成」按鈕
+     */
+    if( self.sourceMode == KRCameraModesForCamera )
+    {
+        [self _makeiPadCancelButtonOnPopCameraView];
+    }
+    else
+    {
+        if( [self.view viewWithTag:_krCameraCancelButtonTag] )
+        {
+            [[self.view viewWithTag:_krCameraCancelButtonTag] removeFromSuperview];
+        }
+    }
+    
+}
+
+/*
+ * @ 如果是使用上面的 UIPopoverController 在顯示 Picker 的，那就要用這裡的函式去 Dismiss 它。
+ */
+-(void)dismissPopover
+{
+    if( self.cameraPopoverController.isPopoverVisible )
+    {
+        [self.cameraPopoverController dismissPopoverAnimated:YES];
+    }
+}
+
+-(BOOL)isIpadDevice
+{
+    return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad );
 }
 
 #pragma Setters
@@ -634,13 +757,18 @@
     }
 }
 
+-(void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    [self dismissPopover];
+}
+
 #pragma NavigationDelegate
 -(void)navigationController:(UINavigationController *)navigationController
      willShowViewController:(UIViewController *)viewController
                    animated:(BOOL)animated{
     
     //NSLog(@"here 1");
-
+    
 }
 
 -(void)navigationController:(UINavigationController *)navigationController
@@ -648,6 +776,8 @@
                    animated:(BOOL)animated{
     
     //NSLog(@"here 2");
+    
+    
     
 }
 

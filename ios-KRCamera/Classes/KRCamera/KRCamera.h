@@ -56,6 +56,8 @@ typedef enum _KRCameraModes {
      * 而不會再進入「Preview」的確認畫面了。
      */
     BOOL displaysCameraControls;
+    //如果要在 iPad 上顯示相機，就要用這個
+    UIPopoverController *cameraPopoverController;
     //儲存的圖片
     //UIImage *savedImage;
     //儲存的影片位址
@@ -75,6 +77,7 @@ typedef enum _KRCameraModes {
 @property (nonatomic, assign) BOOL autoDismissPresent;
 @property (nonatomic, assign) BOOL autoRemoveFromSuperview;
 @property (nonatomic, assign) BOOL displaysCameraControls;
+@property (nonatomic, strong) UIPopoverController *cameraPopoverController;
 //@property (nonatomic, assign) UIImage *savedImage;
 //@property (nonatomic, assign) NSURL *videoUrl;
 
@@ -90,6 +93,15 @@ typedef enum _KRCameraModes {
 //
 -(void)hideStatusBar;
 -(void)showStatusBar;
+/*
+ * iPad Using
+ */
+-(void)displayPopoverFromView:(UIView *)_fromTargetView inView:(UIView *)_showInView;
+-(void)dismissPopover;
+/*
+ * 
+ */
+-(BOOL)isIpadDevice;
 
 @end
 

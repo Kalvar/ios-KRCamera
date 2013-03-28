@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8EF903CA17049B3C00422FBA /* btn_done.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF903C817049B3C00422FBA /* btn_done.png */; };
+		8EF903CB17049B3C00422FBA /* btn_done@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF903C917049B3C00422FBA /* btn_done@2x.png */; };
 		8EF9A89016F601D9007004F6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A88F16F601D9007004F6 /* UIKit.framework */; };
 		8EF9A89216F601D9007004F6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A89116F601D9007004F6 /* Foundation.framework */; };
 		8EF9A89416F601D9007004F6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9A89316F601D9007004F6 /* CoreGraphics.framework */; };
@@ -27,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8EF903C817049B3C00422FBA /* btn_done.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_done.png; sourceTree = "<group>"; };
+		8EF903C917049B3C00422FBA /* btn_done@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_done@2x.png"; sourceTree = "<group>"; };
 		8EF9A88C16F601D9007004F6 /* ios-KRCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-KRCamera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8EF9A88F16F601D9007004F6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8EF9A89116F601D9007004F6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -140,6 +144,8 @@
 		8EF9A8B316F601F9007004F6 /* KRCamera */ = {
 			isa = PBXGroup;
 			children = (
+				8EF903C817049B3C00422FBA /* btn_done.png */,
+				8EF903C917049B3C00422FBA /* btn_done@2x.png */,
 				8EF9A8B416F601F9007004F6 /* KRCamera.h */,
 				8EF9A8B516F601F9007004F6 /* KRCamera.m */,
 			);
@@ -224,6 +230,8 @@
 				8EF9A8A416F601D9007004F6 /* Default@2x.png in Resources */,
 				8EF9A8A616F601D9007004F6 /* Default-568h@2x.png in Resources */,
 				8EF9A8AC16F601D9007004F6 /* ViewController.xib in Resources */,
+				8EF903CA17049B3C00422FBA /* btn_done.png in Resources */,
+				8EF903CB17049B3C00422FBA /* btn_done@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
