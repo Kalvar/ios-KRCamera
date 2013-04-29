@@ -243,6 +243,9 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     self.cameraPopoverController.delegate = self;
     //
     //[self _makeiPadCancelButtonOnPopCameraView];
+    //檢查是否有相機功能
+    //self.supportCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+    self.supportCamera = [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
     
 //    CGRect _frame = self.view.frame;
 //    _frame.size = CGSizeMake(768.0f, 1004.0f);
@@ -417,6 +420,7 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 @synthesize autoRemoveFromSuperview = _autoRemoveFromSuperview;
 @synthesize displaysCameraControls;
 @synthesize cameraPopoverController;
+@synthesize supportCamera;
 //@synthesize savedImage;
 //@synthesize videoUrl;
 
@@ -654,6 +658,14 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 -(BOOL)isIpadDevice
 {
     return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad );
+}
+
+-(BOOL)isDeviceSupportsCamera
+{
+    //檢查是否有相機功能
+    //self.supportCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+    self.supportCamera = [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
+    return self.supportCamera;
 }
 
 #pragma Setters

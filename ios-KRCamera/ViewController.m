@@ -40,31 +40,37 @@
 #pragma KRCameraDelegate
 -(IBAction)takePicture:(id)sender
 {
-    self._krCamera.isOpenVideo             = NO;
-    self._krCamera.sourceMode              = KRCameraModesForCamera;
-    self._krCamera.displaysCameraControls  = NO;
-    [self._krCamera startCamera];
     /*
-     * @ 如果要用 presentViewController 的模式啟動相機，就不需要在 viewDidLoad 裡執行 wantToFullScreen 方法。
+     * @ 如果 Device 支援相機
      */
-    //[self presentViewController:self._krCamera animated:YES completion:nil];
-    if( [self._krCamera isIpadDevice] )
+    if( self._krCamera.isSupportCamera )
     {
+        self._krCamera.isOpenVideo             = NO;
+        self._krCamera.sourceMode              = KRCameraModesForCamera;
+        self._krCamera.displaysCameraControls  = NO;
+        [self._krCamera startCamera];
         /*
-         * @ 如果是 iPad
+         * @ 如果要用 presentViewController 的模式啟動相機，就不需要在 viewDidLoad 裡執行 wantToFullScreen 方法。
          */
-        self._krCamera.autoDismissPresent      = YES;
-        self._krCamera.autoRemoveFromSuperview = NO;
-        [self._krCamera displayPopoverFromView:self.view inView:self.view];
-    }
-    else
-    {
-        /*
-         * @ 如果要用 addSubview 的模式啟動相機，就要先在 viewDidLoad 裡執行 wantToFullScreen 方法先隱藏狀態列。
-         */
-        self._krCamera.autoDismissPresent      = NO;
-        self._krCamera.autoRemoveFromSuperview = YES;
-        [self.view addSubview:self._krCamera.view];
+        //[self presentViewController:self._krCamera animated:YES completion:nil];
+        if( [self._krCamera isIpadDevice] )
+        {
+            /*
+             * @ 如果是 iPad
+             */
+            self._krCamera.autoDismissPresent      = YES;
+            self._krCamera.autoRemoveFromSuperview = NO;
+            [self._krCamera displayPopoverFromView:self.view inView:self.view];
+        }
+        else
+        {
+            /*
+             * @ 如果要用 addSubview 的模式啟動相機，就要先在 viewDidLoad 裡執行 wantToFullScreen 方法先隱藏狀態列。
+             */
+            self._krCamera.autoDismissPresent      = NO;
+            self._krCamera.autoRemoveFromSuperview = YES;
+            [self.view addSubview:self._krCamera.view];
+        }
     }
 }
 

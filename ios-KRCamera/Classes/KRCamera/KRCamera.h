@@ -62,6 +62,8 @@ typedef enum _KRCameraModes {
     //UIImage *savedImage;
     //儲存的影片位址
     //NSURL *videoUrl;
+    //Device 是否支援相機
+    BOOL supportCamera;
 }
 
 @property (nonatomic, weak) id parentTarget;
@@ -78,6 +80,7 @@ typedef enum _KRCameraModes {
 @property (nonatomic, assign) BOOL autoRemoveFromSuperview;
 @property (nonatomic, assign) BOOL displaysCameraControls;
 @property (nonatomic, strong) UIPopoverController *cameraPopoverController;
+@property (nonatomic, assign, getter = isSupportCamera) BOOL supportCamera;
 //@property (nonatomic, assign) UIImage *savedImage;
 //@property (nonatomic, assign) NSURL *videoUrl;
 
@@ -102,6 +105,10 @@ typedef enum _KRCameraModes {
  * 
  */
 -(BOOL)isIpadDevice;
+/*
+ * @ 偵測 Device 支援項目
+ */
+-(BOOL)isDeviceSupportsCamera;
 
 @end
 
