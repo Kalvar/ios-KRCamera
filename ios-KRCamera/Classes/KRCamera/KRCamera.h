@@ -7,7 +7,6 @@
 //  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
 //
 
-
 #import <UIKit/UIKit.h>
 
 //相機運作模式

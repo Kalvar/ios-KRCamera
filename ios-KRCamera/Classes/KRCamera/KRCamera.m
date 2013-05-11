@@ -210,6 +210,7 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 -(void)_makeiPadCancelButtonOnPopCameraView;
 -(UIImage *)_imageNameNoCache:(NSString *)_imageName;
 -(BOOL)_isIphone5;
+-(BOOL)_isIpadDevice;
 -(void)_appearStatusBar:(BOOL)_isAppear;
 -(NSString *)_resetVideoPath:(NSString *)_videoPath;
 -(void)_setupConfigs;
@@ -238,9 +239,16 @@ static NSInteger _krCameraCancelButtonTag = 2099;
      */
     autoDismissPresent      = NO;
     autoRemoveFromSuperview = NO;
-    //
-    cameraPopoverController = [[UIPopoverController alloc] initWithContentViewController:self];
-    self.cameraPopoverController.delegate = self;
+    //只有 iPad 支援宣告 Popover
+    if( [self _isIpadDevice] )
+    {
+        cameraPopoverController = [[UIPopoverController alloc] initWithContentViewController:self];
+        self.cameraPopoverController.delegate = self;
+    }
+    else
+    {
+        self.cameraPopoverController = nil;
+    }
     //
     //[self _makeiPadCancelButtonOnPopCameraView];
     //檢查是否有相機功能
@@ -268,7 +276,7 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     [_button setFrame:CGRectMake(20.0f, 20.0f, 60.0f, 28.0f)];
     [_button setTag:_krCameraCancelButtonTag];
     [_button setBackgroundColor:[UIColor clearColor]];
-    [_button setBackgroundImage:[self _imageNameNoCache:@"btn_done.png"] forState:UIControlStateNormal];
+    [_button setBackgroundImage:[self _imageNameNoCache:@"btn_camera_done.png"] forState:UIControlStateNormal];
     [_button setTitle:@"完成" forState:UIControlStateNormal];
     [_button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_button.titleLabel setFont:[UIFont boldSystemFontOfSize:14.0f]];
@@ -297,6 +305,11 @@ static NSInteger _krCameraCancelButtonTag = 2099;
         return YES;
     }
     return NO;
+}
+
+-(BOOL)_isIpadDevice
+{
+    return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ) ? YES : NO;
 }
 
 -(void)_appearStatusBar:(BOOL)_isAppear
@@ -657,7 +670,8 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 
 -(BOOL)isIpadDevice
 {
-    return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad );
+    return [self _isIpadDevice];
+    //return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad );
 }
 
 -(BOOL)isDeviceSupportsCamera
