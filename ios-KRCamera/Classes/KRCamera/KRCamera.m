@@ -87,7 +87,7 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     //Use LocationManager to Catch the GPS locations.
     CLLocationManager *locationManager = [[CLLocationManager alloc] init];
     [locationManager startUpdatingLocation];
-    CLLocation *location = locationManager.location;;
+    CLLocation *location = locationManager.location;
     [locationManager stopUpdatingLocation];
     NSMutableDictionary *gps = [NSMutableDictionary dictionary];
     
@@ -187,12 +187,16 @@ static NSInteger _krCameraCancelButtonTag = 2099;
                               if(error) {
                                   //NSLog(@"error");
                               }else{
-                                  if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] ){
+                                  //一般原始圖
+                                  if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] )
+                                  {
                                       [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
                                                                                    imagePath:[NSString stringWithFormat:@"%@", assetURL]
                                                                        imagePickerController:picker];
                                   }
-                                  if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:metadata:imagePickerController:)] ){
+                                  //含有完整 EXIF 等 METADATA 資訊的圖片
+                                  if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:metadata:imagePickerController:)] )
+                                  {
                                       [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
                                                                                    imagePath:[NSString stringWithFormat:@"%@", assetURL]
                                                                                     metadata:[info objectForKey:UIImagePickerControllerMediaMetadata]
@@ -211,6 +215,7 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 -(UIImage *)_imageNameNoCache:(NSString *)_imageName;
 -(BOOL)_isIphone5;
 -(BOOL)_isIpadDevice;
+-(BOOL)_isDeviceSupportsCamera;
 -(void)_appearStatusBar:(BOOL)_isAppear;
 -(NSString *)_resetVideoPath:(NSString *)_videoPath;
 -(void)_setupConfigs;
@@ -230,37 +235,26 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     self.videoQuality       = UIImagePickerControllerQualityTypeHigh;
     self.videoMaxSeconeds   = 15;
     self.videoMaxDuration   = -1;
-    //savedImage            = [[UIImage alloc] init];
-    //videoUrl              = [[NSURL alloc] init];
     self.isOnlyVideo        = NO;
     self.displaysCameraControls = YES;
-    /*
-     * @ 因為有自訂自已的 Setter
-     */
     autoDismissPresent      = NO;
     autoRemoveFromSuperview = NO;
     //只有 iPad 支援宣告 Popover
     if( [self _isIpadDevice] )
     {
-        cameraPopoverController = [[UIPopoverController alloc] initWithContentViewController:self];
+        if( !cameraPopoverController )
+        {
+            cameraPopoverController = [[UIPopoverController alloc] initWithContentViewController:self];
+        }
         self.cameraPopoverController.delegate = self;
     }
     else
     {
         self.cameraPopoverController = nil;
     }
-    //
-    //[self _makeiPadCancelButtonOnPopCameraView];
-    //檢查是否有相機功能
-    //self.supportCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
-    self.supportCamera = [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
-    
-//    CGRect _frame = self.view.frame;
-//    _frame.size = CGSizeMake(768.0f, 1004.0f);
-//    [self.view setFrame:_frame];
-//    cameraPopoverController = [[UIPopoverController alloc] initWithContentViewController:self];
-//    [cameraPopoverController setPopoverContentSize:CGSizeMake(768.0f, 1004.0f)];
-    
+    self.supportCamera    = [self _isDeviceSupportsCamera];
+    self.keepFullScreen   = NO;
+    self.sizeToFitIphone5 = NO;
 }
 
 -(void)_makeiPadCancelButtonOnPopCameraView
@@ -298,10 +292,14 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 -(BOOL)_isIphone5
 {
     CGRect _screenBounds = [[UIScreen mainScreen] bounds];
-    if( _screenBounds.size.width > 480.0f && _screenBounds.size.width <= 568.0f ){
+    //橫向
+    if( _screenBounds.size.width > 480.0f && _screenBounds.size.width <= 568.0f )
+    {
         return YES;
     }
-    if( _screenBounds.size.height > 480.0f && _screenBounds.size.width <= 568.0f ){
+    //直向
+    if( _screenBounds.size.height > 480.0f && _screenBounds.size.width <= 568.0f )
+    {
         return YES;
     }
     return NO;
@@ -317,16 +315,25 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     [[UIApplication sharedApplication] setStatusBarHidden:!_isAppear];
 }
 
+-(BOOL)_isDeviceSupportsCamera
+{
+    //檢查是否有相機功能
+    //return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
+}
+
 -(NSString *)_resetVideoPath:(NSString *)_videoPath
 {
     //Temperatue Path of Recorded Video 
     ///private/var/mobile/Applications/F5D3F6CE-DD41-4FF1-94A4-9C0EBAC70AA3/tmp/capture-T0x232520.tmp.GL1Fg5/capturedvideo.MOV
     NSString *_rePath = @"";
-    if( [_videoPath length] > 0 ){
+    if( [_videoPath length] > 0 )
+    {
         NSMutableArray *explodes = [NSMutableArray arrayWithArray:[_videoPath componentsSeparatedByString:@"/"]];
         [explodes removeObjectAtIndex:0];
         [explodes removeObjectAtIndex:[explodes count] - 2];
-        for( NSString *_path in explodes ){
+        for( NSString *_path in explodes )
+        {
             _rePath = [_rePath stringByAppendingFormat:@"/%@", _path];
         }
     }
@@ -342,16 +349,21 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     switch ( self.sourceMode ) {
         case KRCameraModesForCamera:
             //拍照或錄影
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+            {
                 self.sourceType = UIImagePickerControllerSourceTypeCamera;
                 //self.showsCameraControls = self.showCameraControls;
                 //有錄影功能
-                if ( self.isOpenVideo ) {
+                if ( self.isOpenVideo )
+                {
                     //只拍影片
-                    if( self.isOnlyVideo ){
+                    if( self.isOnlyVideo )
+                    {
                         //限定相簿只能顯示影片檔
                         self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
-                    }else{
+                    }
+                    else
+                    {
                         //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
                         self.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
                     }
@@ -359,7 +371,9 @@ static NSInteger _krCameraCancelButtonTag = 2099;
                     [self setVideoQuality:self.videoQuality];
                     //設定最大錄影時間(秒)
                     [self setVideoMaximumDuration:self.videoMaxSeconeds];
-                }else{
+                }
+                else
+                {
                     self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
                 }
             }
@@ -367,23 +381,31 @@ static NSInteger _krCameraCancelButtonTag = 2099;
             break;
         case KRCameraModesForSelectAlbum:
             //從相簿選取
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
+            {
                 self.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-                if ( self.isOpenVideo ) {
-                    if( self.isOnlyVideo ){
+                if ( self.isOpenVideo )
+                {
+                    if( self.isOnlyVideo )
+                    {
                         //限定相簿只能顯示影片檔
                         self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
-                    }else{
+                    }
+                    else
+                    {
                         //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
                         self.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
                     }
                     //有指定取出的影片長度
-                    if( self.videoMaxDuration > 0 ){
+                    if( self.videoMaxDuration > 0 )
+                    {
                         //一定要允許編輯
                         self.allowsEditing = YES;
                         self.videoMaximumDuration = self.videoMaxDuration;
                     }
-                }else{
+                }
+                else
+                {
                     self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
                 }
             }
@@ -392,21 +414,29 @@ static NSInteger _krCameraCancelButtonTag = 2099;
             break;
         case KRCameraModesForAllPhotos:
             //直接呈現全部的照片
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum]) {
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum])
+            {
                 self.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-                if ( self.isOpenVideo ) {
-                    if( self.isOnlyVideo ){
+                if ( self.isOpenVideo )
+                {
+                    if( self.isOnlyVideo )
+                    {
                         //限定相簿只能顯示影片檔
                         self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
-                    }else{
+                    }
+                    else
+                    {
                         //NSArray *mediaTypes    = [UIImagePickerController availableMediaTypesForSourceType:imagePicker.sourceType];
                         self.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, (NSString *)kUTTypeImage, nil];
                     }
-                    if( self.videoMaxDuration > 0 ){
+                    if( self.videoMaxDuration > 0 )
+                    {
                         self.allowsEditing = YES;
                         self.videoMaximumDuration = self.videoMaxDuration;
                     }
-                }else{
+                }
+                else
+                {
                     self.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
                 }
             }
@@ -434,8 +464,8 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 @synthesize displaysCameraControls;
 @synthesize cameraPopoverController;
 @synthesize supportCamera;
-//@synthesize savedImage;
-//@synthesize videoUrl;
+@synthesize keepFullScreen;
+@synthesize sizeToFitIphone5;
 
 -(id)initWithDelete:(id<KRCameraDelegate>)_krCameraDelegate pickerMode:(KRCameraModes)_pickerMode
 {
@@ -495,7 +525,6 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 
 -(void)didReceiveMemoryWarning
 {
-    //we're too important to get flushed out by our child imagepicker.
     [super didReceiveMemoryWarning];
     
 }
@@ -522,15 +551,63 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     {
         _frame.origin.y = 0.0f;
     }
+    //如果不要 Controls Bar
+    if( !self.showsCameraControls )
+    {
+        if( self.sizeToFitIphone5 )
+        {
+            //又是 iPhone 5
+            if( [self isIphone5] )
+            {
+                //且是客製化呎吋
+                CGFloat _screenWidth   = 320.0f;
+                CGFloat _iphone5Height = 568.0f;
+                CGFloat _cameraWidth   = _frame.size.width;
+                CGFloat _cameraHeight  = _frame.size.height;
+                CGRect _screenBounds   = [[UIScreen mainScreen] bounds];
+                //橫向
+                if( _screenBounds.size.width > 480.0f && _screenBounds.size.width <= 568.0f )
+                {
+                    if( _cameraWidth < _iphone5Height && _cameraHeight < _screenWidth )
+                    {
+                        if( _cameraHeight + 96.0f <= _screenWidth )
+                        {
+                            _frame.size.height = _cameraHeight + 96.0f;
+                        }
+                    }
+                    
+                }
+                
+                //直向
+                if( _screenBounds.size.height > 480.0f && _screenBounds.size.width <= 568.0f )
+                {
+                    if( _cameraHeight < _iphone5Height && _cameraWidth <= _screenWidth )
+                    {
+                        //iPhone 5 須多加 96 px 的 cameraControls Bar 的高度
+                        if( _cameraHeight + 96.0f <= _iphone5Height )
+                        {
+                            _frame.size.height = _cameraHeight + 96.0f;
+                        }
+                    }
+                }
+            }
+        }
+    }
     [self.view setFrame:_frame];
-    
     //[self.view setFrame:CGRectMake(0.0f, 0.0f, 768.0f, 1024.0f)];
     //NSLog(@"self.view : %f, %f", self.view.frame.size.width, self.view.frame.size.height);
 }
 
 -(void)wantToFullScreen
 {
+    self.keepFullScreen = YES;
     [self hideStatusBar];
+}
+
+-(void)cancelFullScreen
+{
+    self.keepFullScreen = NO;
+    [self showStatusBar];
 }
 
 /*
@@ -538,12 +615,23 @@ static NSInteger _krCameraCancelButtonTag = 2099;
  */
 -(void)remove
 {
-    if( self.view.superview ){
+    if( self.view.superview )
+    {
         [self.view removeFromSuperview];
     }
-    if( self.parentTarget ){
+    if( self.parentTarget )
+    {
         self.parentTarget = nil;
     }
+}
+
+/*
+ * @ 移除並狀參數恢復初始狀態
+ */
+-(void)removeAndInitializeAllSettings
+{
+    [self remove];
+    [self _initWithVars];
 }
 
 /*
@@ -560,7 +648,10 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     if( self.autoDismissPresent )
     {
         [self dismissViewControllerAnimated:YES completion:^{
-            [self showStatusBar];
+            if( !self.keepFullScreen )
+            {
+                [self showStatusBar];
+            }
         }];
     }
 }
@@ -615,21 +706,15 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     self.cameraPopoverController          = nil;
     cameraPopoverController               = [[UIPopoverController alloc] initWithContentViewController:self];
     self.cameraPopoverController.delegate = self;
-    
     CGRect popoverRect = [_showInView convertRect:[_fromTargetView frame]
                                          fromView:[_fromTargetView superview]];
-    
-    
     //NSLog(@"popoverRect %f, %f, %f, %f", popoverRect.origin.x, popoverRect.origin.y, popoverRect.size.width, popoverRect.size.height);
-    
     CGSize _inViewSize = _showInView.frame.size;
     //popoverRect.size.height = self.view.frame.size.height;
     popoverRect.origin.y    = _inViewSize.height; //popoverRect.size.height;
-    
     //popoverRect.size = CGSizeMake(768.0f, 800.0f);
     //popoverRect.origin = CGPointMake(0.0f, 0.0f);
     //NSLog(@"_inViewSize %f, %f\n\n", _inViewSize.width, _inViewSize.height);
-    
     //CGRectMake(0, 0, 300, 300)
     [self.cameraPopoverController presentPopoverFromRect:popoverRect
                                                   inView:_showInView
@@ -670,15 +755,17 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 
 -(BOOL)isIpadDevice
 {
-    return [self _isIpadDevice];
-    //return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad );
+    return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad );
+}
+
+-(BOOL)isIphone5
+{
+    return [self _isIphone5];
 }
 
 -(BOOL)isDeviceSupportsCamera
 {
-    //檢查是否有相機功能
-    //self.supportCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
-    self.supportCamera = [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
+    self.supportCamera = [self _isDeviceSupportsCamera];
     return self.supportCamera;
 }
 
@@ -701,15 +788,27 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingMediaWithInfo:imagePickerController:)] ){
         [self.KRCameraDelegate krCameraDidFinishPickingMediaWithInfo:info imagePickerController:picker];
     }
-    //當開啟影片(鏡頭)功能時
-    if ( self.isOpenVideo ) {
+    /*
+     * @ self.isOpenVideo 使用時機
+     *
+     *   - 1. 當需要照相時
+     *   - 2. 當需要錄影時
+     *   - 3. 當需要從相簿選擇影片時
+     */
+    if ( self.isOpenVideo )
+    {
         NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
-        if ([mediaType isEqualToString:@"public.movie"]) {
+        /*
+         * @ 如果是錄影
+         */
+        if ([mediaType isEqualToString:@"public.movie"])
+        {
             //來源為影片
             NSURL *videoUrl     = [info objectForKey:UIImagePickerControllerMediaURL];
             NSString *videoPath = videoUrl.path;
             ///*
-            if (self.allowsSaveFile) {
+            if (self.allowsSaveFile)
+            {
                 //直接存至相簿
                 UISaveVideoAtPathToSavedPhotosAlbum(videoPath, self, nil, nil);
             }
@@ -744,29 +843,74 @@ static NSInteger _krCameraCancelButtonTag = 2099;
                 }
             }
              */
-        }else if ([mediaType isEqualToString:@"public.image"]) {
-            //來源為圖片
-            if (self.allowsSaveFile) {
+        }
+        else if ([mediaType isEqualToString:@"public.image"])
+        {
+            /*
+             * @ 如果來源是圖片
+             */
+            if (self.allowsSaveFile)
+            {
                 [self _writeToAlbum:info imagePicker:picker];
                 //UIImageWriteToSavedPhotosAlbum(savedImage, self, nil, nil);
             }else{
-                if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] ){
-                    [self.KRCameraDelegate krCameraDidFinishPickingImage:[info objectForKey:@"UIImagePickerControllerOriginalImage"]
-                                                                 imagePath:[NSString stringWithFormat:@"%@", [info objectForKey:UIImagePickerControllerReferenceURL]]
-                                                     imagePickerController:picker];
+                /*
+                 * @ 允許修改就顯示修改圖
+                 */
+                if( self.allowsEditing || self.isAllowEditing )
+                {
+                    if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishEditedImage:imagePath:imagePickerController:)] ){
+                        [self.KRCameraDelegate krCameraDidFinishEditedImage:[info objectForKey:@"UIImagePickerControllerEditedImage"]
+                                                                  imagePath:[NSString stringWithFormat:@"%@", [info objectForKey:UIImagePickerControllerReferenceURL]]
+                                                      imagePickerController:picker];
+                    }
+                }
+                else
+                {
+                    /*
+                     * @ 不允許修改就進入原始圖
+                     */
+                    if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] ){
+                        [self.KRCameraDelegate krCameraDidFinishPickingImage:[info objectForKey:@"UIImagePickerControllerOriginalImage"]
+                                                                   imagePath:[NSString stringWithFormat:@"%@", [info objectForKey:UIImagePickerControllerReferenceURL]]
+                                                       imagePickerController:picker];
+                    }
                 }
             }
         }
     }else {
-        //當關閉影片功能時
-        if (self.allowsSaveFile) {
+        /*
+         * @ 來源是相簿選擇的
+         *   - 當關閉影片功能時
+         */
+        if (self.allowsSaveFile)
+        {
             [self _writeToAlbum:info imagePicker:picker];
             //UIImageWriteToSavedPhotosAlbum(savedImage, self, nil, nil);
-        }else{
-            if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] ){
-                [self.KRCameraDelegate krCameraDidFinishPickingImage:[info objectForKey:@"UIImagePickerControllerOriginalImage"]
-                                                             imagePath:[NSString stringWithFormat:@"%@", [info objectForKey:UIImagePickerControllerReferenceURL]]
-                                                 imagePickerController:picker];
+        }
+        else
+        {
+            /*
+             * @ 允許修改就顯示修改圖
+             */
+            if( self.allowsEditing || self.isAllowEditing )
+            {
+                if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishEditedImage:imagePath:imagePickerController:)] ){
+                    [self.KRCameraDelegate krCameraDidFinishEditedImage:[info objectForKey:@"UIImagePickerControllerEditedImage"]
+                                                              imagePath:[NSString stringWithFormat:@"%@", [info objectForKey:UIImagePickerControllerReferenceURL]]
+                                                  imagePickerController:picker];
+                }
+            }
+            else
+            {
+                /*
+                 * @ 不允許修改就進入原始圖
+                 */
+                if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] ){
+                    [self.KRCameraDelegate krCameraDidFinishPickingImage:[info objectForKey:@"UIImagePickerControllerOriginalImage"]
+                                                               imagePath:[NSString stringWithFormat:@"%@", [info objectForKey:UIImagePickerControllerReferenceURL]]
+                                                   imagePickerController:picker];
+                }
             }
         }
 
@@ -791,20 +935,16 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 #pragma NavigationDelegate
 -(void)navigationController:(UINavigationController *)navigationController
      willShowViewController:(UIViewController *)viewController
-                   animated:(BOOL)animated{
-    
-    //NSLog(@"here 1");
-    
+                   animated:(BOOL)animated
+{
+    //...
 }
 
 -(void)navigationController:(UINavigationController *)navigationController
       didShowViewController:(UIViewController *)viewController
-                   animated:(BOOL)animated{
-    
-    //NSLog(@"here 2");
-    
-    
-    
+                   animated:(BOOL)animated
+{
+    //...
 }
 
 @end

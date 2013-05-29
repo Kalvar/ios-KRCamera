@@ -30,7 +30,15 @@ typedef enum _KRCameraModes {
     __weak id<KRCameraDelegate> KRCameraDelegate;
     //選擇使用"拍照"或"檔案選取"方式
     KRCameraModes sourceMode;
-    //開啟或關閉影片(鏡頭)功能
+    /*
+     * @ 開啟或關閉影片(鏡頭)功能
+     *
+     * @ self.isOpenVideo 使用時機
+     *
+     *   - 1. 當需要照相時
+     *   - 2. 當需要錄影時
+     *   - 3. 當需要從相簿選擇影片時
+     */
     BOOL isOpenVideo;
     //是否儲存圖片或影片
     BOOL allowsSaveFile;
@@ -49,20 +57,20 @@ typedef enum _KRCameraModes {
     //是否自動關閉
     BOOL autoRemoveFromSuperview;
     /*
-     * 是否使用自訂義的 Toolbar 控制列 ?
-     * 也就是原先官方的拍照按鈕會消失，而能改放自已客製化的按鈕上去，
-     * 之後，使用自訂義的拍照按鈕時，就會直接進行拍照的 Delegate 和動作，
-     * 而不會再進入「Preview」的確認畫面了。
+     * @ 是否使用自訂義的 Toolbar 控制列 ?
+     *   - 也就是原先官方的拍照按鈕會消失，而能改放自已客製化的按鈕上去，
+     *     之後，使用自訂義的拍照按鈕時，就會直接進行拍照的 Delegate 和動作，
+     *     而不會再進入「Preview」的確認畫面了。
      */
     BOOL displaysCameraControls;
     //如果要在 iPad 上顯示相機，就要用這個
     UIPopoverController *cameraPopoverController;
-    //儲存的圖片
-    //UIImage *savedImage;
-    //儲存的影片位址
-    //NSURL *videoUrl;
     //Device 是否支援相機
     BOOL supportCamera;
+    //是否保持全螢幕
+    BOOL keepFullScreen;
+    //是否自適應 Camera 顯示
+    BOOL sizeToCustomFit;
 }
 
 @property (nonatomic, weak) id parentTarget;
@@ -80,8 +88,8 @@ typedef enum _KRCameraModes {
 @property (nonatomic, assign) BOOL displaysCameraControls;
 @property (nonatomic, strong) UIPopoverController *cameraPopoverController;
 @property (nonatomic, assign, getter = isSupportCamera) BOOL supportCamera;
-//@property (nonatomic, assign) UIImage *savedImage;
-//@property (nonatomic, assign) NSURL *videoUrl;
+@property (nonatomic, assign) BOOL keepFullScreen;
+@property (nonatomic, assign) BOOL sizeToFitIphone5;
 
 -(id)initWithDelete:(id<KRCameraDelegate>)_krCameraDelegate pickerMode:(KRCameraModes)_pickerMode;
 -(id)initWithDelegate:(id<KRCameraDelegate>)_krCameraDelegate;
@@ -89,7 +97,9 @@ typedef enum _KRCameraModes {
 -(void)startChoose;
 -(void)startCamera;
 -(void)wantToFullScreen;
+-(void)cancelFullScreen;
 -(void)remove;
+-(void)removeAndInitializeAllSettings;
 -(void)cancel;
 -(void)takeOnePicture;
 //
@@ -104,6 +114,7 @@ typedef enum _KRCameraModes {
  * 
  */
 -(BOOL)isIpadDevice;
+-(BOOL)isIphone5;
 /*
  * @ 偵測 Device 支援項目
  */
@@ -123,6 +134,10 @@ typedef enum _KRCameraModes {
  * @ 對象是圖片
  */
 -(void)krCameraDidFinishPickingImage:(UIImage *)_image imagePath:(NSString *)_imagePath imagePickerController:(UIImagePickerController *)_imagePicker;
+/*
+ * @ 對象是修改後的圖片
+ */
+-(void)krCameraDidFinishEditedImage:(UIImage *)_image imagePath:(NSString *)_imagePath imagePickerController:(UIImagePickerController *)_imagePicker;
 /*
  * @ 對象是圖片並包含 EXIF / TIFF 等 MetaData 資訊
  */

@@ -47,13 +47,13 @@
         self._krCamera.isOpenVideo             = NO;
         self._krCamera.sourceMode              = KRCameraModesForCamera;
         self._krCamera.displaysCameraControls  = NO;
-        [self._krCamera startCamera];
         /*
          * @ 如果要用 presentViewController 的模式啟動相機，就不需要在 viewDidLoad 裡執行 wantToFullScreen 方法。
          */
         //[self presentViewController:self._krCamera animated:YES completion:nil];
         if( [self._krCamera isIpadDevice] )
         {
+            [self._krCamera startCamera];
             /*
              * @ 如果是 iPad
              */
@@ -64,14 +64,30 @@
         else
         {
             /*
+             * @ 在這裡可自訂義 Camera 的呎吋與出現位置
+             */
+            //If you wanna customize camera displays frame with iPhone 5.
+            //Then you can use sizetoFistIphone5 to open autolayout setting.
+            self._krCamera.sizeToFitIphone5 = YES;
+            [self._krCamera.view setFrame:CGRectMake(0.0f, 0.0f, 320.0f, 320.0f)];
+            /*
+            //Another Way.
+            if( [self._krCamera isIphone5] )
+            {
+                self._krCamera.sizeToFitIphone5 = NO;
+                [self._krCamera.view setFrame:CGRectMake(0.0f, 0.0f, 320.0f, 320.0f + 96.0f)];
+            }
+            else
+            {
+                [self._krCamera.view setFrame:CGRectMake(0.0f, 0.0f, 320.0f, 320.0f)];
+            }
+             */
+            [self._krCamera startCamera];
+            /*
              * @ 如果要用 addSubview 的模式啟動相機，就要先在 viewDidLoad 裡執行 wantToFullScreen 方法先隱藏狀態列。
              */
             self._krCamera.autoDismissPresent      = NO;
             self._krCamera.autoRemoveFromSuperview = YES;
-            /*
-             * @ 在這裡可自訂義 Camera 的呎吋與出現位置
-             */
-            //[self._krCamera.view setFrame:CGRectMake(0.0f, 80.0f, 320, 320)];
             [self.view addSubview:self._krCamera.view];
         }
     }
