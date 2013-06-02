@@ -1,6 +1,8 @@
 ## Supports
 
-KRCamera supports ARC ( Automatic Reference Counting ). If you received a memory warning message, that may be an iOS Version bugs happened.
+KRCamera supports ARC ( Automatic Reference Counting ). If you received a memory warning message, that may be an iOS Version bugs happened, don't worry too much. 
+
+KRCamera supports iPhone 4, iPhone 4S, iPhone 5 and iPad. If you wanna develop something custom camera-playing or custom camera-displaying view ( Ex : 320 x 320 ) not full screen to show, the KRCamera can be the basic developement framework.
 
 ## How To Get Started
 
