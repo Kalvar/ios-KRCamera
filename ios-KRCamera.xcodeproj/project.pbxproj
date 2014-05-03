@@ -330,13 +330,13 @@
 		8EF9A8B016F601D9007004F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: KUO-MING LIN (LJ8A4ND325)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: KUO-MING LIN (LJ8A4ND325)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios-KRCamera/ios-KRCamera-Prefix.pch";
 				INFOPLIST_FILE = "ios-KRCamera/ios-KRCamera-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "8051EFBE-A79E-44D4-894B-6AD271EF39E6";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -344,13 +344,13 @@
 		8EF9A8B116F601D9007004F6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: KUO-MING LIN (LJ8A4ND325)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: KUO-MING LIN (LJ8A4ND325)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios-KRCamera/ios-KRCamera-Prefix.pch";
 				INFOPLIST_FILE = "ios-KRCamera/ios-KRCamera-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "8051EFBE-A79E-44D4-894B-6AD271EF39E6";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -17,6 +17,8 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 
 @interface KRCamera ()<UIPopoverControllerDelegate>
 
+@property (nonatomic, assign) BOOL _hideStatusBar;
+
 @end
 
 @interface KRCamera (saveToAlbum)
@@ -153,11 +155,32 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 -(void)_writeToAlbum:(NSDictionary *)info imagePicker:(UIImagePickerController *)picker
 {
     UIImage *savedImage = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
-    //儲存圖片(這樣存才能取得圖片 Path)
-    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    [self saveToAlbum:savedImage completion:^(NSURL *assetURL, NSError *error)
+    {
+        if( !error )
+        {
+            //一般原始圖
+            if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] )
+            {
+                [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
+                                                           imagePath:[NSString stringWithFormat:@"%@", assetURL]
+                                               imagePickerController:picker];
+            }
+            
+            //含有完整 EXIF 等 METADATA 資訊的圖片
+            if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:metadata:imagePickerController:)] )
+            {
+                [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
+                                                           imagePath:[NSString stringWithFormat:@"%@", assetURL]
+                                                            metadata:[info objectForKey:UIImagePickerControllerMediaMetadata]
+                                               imagePickerController:picker];
+            }
+        }
+    }];
     
     /*
     // Get the image metadata (EXIF & TIFF)
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
     NSMutableDictionary *_metadata = [[info objectForKey:UIImagePickerControllerMediaMetadata] mutableCopy];
     // add GPS data
     [_metadata setObject:[self getGPSDictionaryForLocation] forKey:(NSString*)kCGImagePropertyGPSDictionary];
@@ -180,30 +203,6 @@ static NSInteger _krCameraCancelButtonTag = 2099;
         }
     }];
     */
-    
-    [library writeImageToSavedPhotosAlbum:[savedImage CGImage]
-                              orientation:(ALAssetOrientation)[savedImage imageOrientation]
-                          completionBlock:^(NSURL *assetURL, NSError *error){
-                              if(error) {
-                                  //NSLog(@"error");
-                              }else{
-                                  //一般原始圖
-                                  if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] )
-                                  {
-                                      [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
-                                                                                   imagePath:[NSString stringWithFormat:@"%@", assetURL]
-                                                                       imagePickerController:picker];
-                                  }
-                                  //含有完整 EXIF 等 METADATA 資訊的圖片
-                                  if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:metadata:imagePickerController:)] )
-                                  {
-                                      [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
-                                                                                   imagePath:[NSString stringWithFormat:@"%@", assetURL]
-                                                                                    metadata:[info objectForKey:UIImagePickerControllerMediaMetadata]
-                                                                       imagePickerController:picker];
-                                  }
-                              }
-                          }];
 }
 
 @end
@@ -255,6 +254,7 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     self.supportCamera    = [self _isDeviceSupportsCamera];
     self.keepFullScreen   = NO;
     self.sizeToFitIphone5 = NO;
+    self._hideStatusBar   = NO;
 }
 
 -(void)_makeiPadCancelButtonOnPopCameraView
@@ -312,7 +312,20 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 
 -(void)_appearStatusBar:(BOOL)_isAppear
 {
-    [[UIApplication sharedApplication] setStatusBarHidden:!_isAppear];
+    if( [self isIOS7] )
+    {
+        //iOS 7
+        if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
+        {
+            self._hideStatusBar = !_isAppear;
+            [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+        }
+    }
+    else
+    {
+        //Only supports under iOS 7.
+        [[UIApplication sharedApplication] setStatusBarHidden:!_isAppear];
+    }
 }
 
 -(BOOL)_isDeviceSupportsCamera
@@ -466,6 +479,7 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 @synthesize supportCamera;
 @synthesize keepFullScreen;
 @synthesize sizeToFitIphone5;
+@synthesize _hideStatusBar;
 
 -(id)initWithDelete:(id<KRCameraDelegate>)_krCameraDelegate pickerMode:(KRCameraModes)_pickerMode
 {
@@ -527,6 +541,13 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 {
     [super didReceiveMemoryWarning];
     
+}
+
+#pragma --mark iOS 7
+//Hide / Show StatusBar
+-(BOOL)prefersStatusBarHidden
+{
+    return self._hideStatusBar;
 }
 
 #pragma MyMethods
@@ -763,10 +784,29 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     return [self _isIphone5];
 }
 
+-(BOOL)isIOS7
+{
+    return ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f);
+}
+
 -(BOOL)isDeviceSupportsCamera
 {
     self.supportCamera = [self _isDeviceSupportsCamera];
     return self.supportCamera;
+}
+
+-(void)saveToAlbum:(UIImage *)_image completion:(void (^)(NSURL *, NSError *))_completion
+{
+    //儲存圖片(這樣存才能取得圖片 Path)
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    [library writeImageToSavedPhotosAlbum:[_image CGImage]
+                              orientation:(ALAssetOrientation)[_image imageOrientation]
+                          completionBlock:^(NSURL *assetURL, NSError *error){
+                              if( _completion )
+                              {
+                                  _completion(assetURL, error);
+                              }
+                          }];
 }
 
 #pragma Setters

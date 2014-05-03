@@ -71,6 +71,7 @@ typedef enum _KRCameraModes {
     BOOL keepFullScreen;
     //是否自適應 Camera 顯示
     BOOL sizeToCustomFit;
+    
 }
 
 @property (nonatomic, weak) id parentTarget;
@@ -115,10 +116,15 @@ typedef enum _KRCameraModes {
  */
 -(BOOL)isIpadDevice;
 -(BOOL)isIphone5;
+-(BOOL)isIOS7;
 /*
  * @ 偵測 Device 支援項目
  */
 -(BOOL)isDeviceSupportsCamera;
+/*
+ * @ 儲存圖片至相簿
+ */
+-(void)saveToAlbum:(UIImage *)_image completion:(void (^)(NSURL *, NSError *))_completion;
 
 @end
 
